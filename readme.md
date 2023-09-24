@@ -46,7 +46,8 @@ bash amiiboPM3.sh </path/to/.eml/directory>
 
 ## Instructions
 
-- Ensure Proxmark3 is properly installed and accessible in your environment.  
+- Ensure Proxmark3 is properly installed and accessible in your environment.
+- Edit the Proxmark3 file paths in each script.
 - Place the Amiibo binary files in the specified input directory.  
 - Execute bin2eml.sh with the input directory as an argument.  
 - The script will convert the files and save the Emulate files in the specified output directory.  
@@ -59,5 +60,4 @@ Contributions are welcome! If you find any issues or have suggestions for improv
 
 ## License
 
-This project is licensed under the MIT License.  
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+This project is licensed under the MIT License.
