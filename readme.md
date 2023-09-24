@@ -2,6 +2,9 @@
 
 This repository contains two Bash scripts designed for converting Amiibo files and executing Proxmark3 commands. These scripts facilitate the process of converting Amiibo binary files (.bin) to their corresponding Emulate (.eml) format and emulating them using Proxmark3.
 
+<img src="img/example.png" alt="script" title="script" width=50%>
+
+
 ## Contents
 
 1. [Scripts](#scripts)
@@ -56,4 +59,5 @@ Contributions are welcome! If you find any issues or have suggestions for improv
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License.  
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
