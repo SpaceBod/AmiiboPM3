@@ -1,7 +1,8 @@
 #!/bin/bash
 
-#  SYNTAX: bash amiibo-convert.sh </path/to/input/directory>
+# SYNTAX: bash amiibo-convert.sh </path/to/input/directory>
 clear
+
 # Initialize the conversion counter
 CONVERSION_COUNT=0
 
@@ -21,30 +22,26 @@ convert_amiibo() {
 
     for ITEM in "${INPUT_DIR}"/*; do
         local BASENAME=$(basename "${ITEM}")
-        local OUTPUT_ITEM="${OUTPUT_DIR}/${BASENAME// /_}"
+        local BASENAME_NO_EXT="${BASENAME%.bin}"
+        local OUTPUT_ITEM="${OUTPUT_DIR}/${BASENAME_NO_EXT// /_}"
 
         if [ -d "${ITEM}" ]; then
-            convert_amiibo "${ITEM}" "${OUTPUT_ITEM}" "${CONVERTER}"
+            local SUBFOLDER_NAME="${OUTPUT_DIR}/$(basename "${ITEM}" | tr ' ' '_')"
+            convert_amiibo "${ITEM}" "${SUBFOLDER_NAME}" "${CONVERTER}"
         elif [ -f "${ITEM}" ] && [ "${ITEM##*.}" == "bin" ]; then
             local EMULATE_FILE="${OUTPUT_ITEM}.eml"
-            local AMIIBO_COPY="${OUTPUT_ITEM}.bin"
 
             if [ -f "${EMULATE_FILE}" ]; then
                 rm -rf "${EMULATE_FILE}"
             fi
 
-            cp -rf "${ITEM}" "${AMIIBO_COPY}"
-            ${CONVERTER} "${AMIIBO_COPY}" > /dev/null 2>&1  # Suppress converter output
-
-            if [ -f "${AMIIBO_COPY}" ]; then
-                rm -rf "${AMIIBO_COPY}"
-            fi
+            ${CONVERTER} "${ITEM}" > "${OUTPUT_ITEM}.eml" 2> /dev/null # Convert directly to .eml
 
             # Increment the conversion counter
             ((CONVERSION_COUNT++))
 
-            # Echo the name of the converted file
-            echo -e "${GREEN}Converted: ${NC}${BASENAME}"
+            # Echo the name of the converted file (filtered for .bin extension)
+            echo -e "${GREEN}Converted: ${NC}${BASENAME_NO_EXT}"
         fi
     done
 }
@@ -69,6 +66,6 @@ echo -e "${CYAN}Starting Conversion...${NC}"
 echo "===================="
 echo ""
 
-convert_amiibo "${INPUT_DIR}" "${DUMP_DIR}" "${CONVERTER}"
+convert_amiibo "${INPUT_DIR}" "${DUMP_DIR}/${INPUT_DIR// /_}" "${CONVERTER}"
 
 echo -e "\n${PURPLE}Total conversions made: ${CONVERSION_COUNT}${NC}"
