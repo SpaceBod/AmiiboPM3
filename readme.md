@@ -1,9 +1,8 @@
 # Amiibo Conversion Scripts
 
-This repository contains two Bash scripts designed for converting Amiibo files and executing Proxmark3 commands. These scripts facilitate the process of converting Amiibo binary files (.bin) to their corresponding Emulate (.eml) format and emulating them using Proxmark3.
+This repository contains two Bash scripts designed for converting Amiibo files and executing Proxmark3 commands. These scripts facilitate the process of formatting the Amiibo binary files (.bin) and emulating them using Proxmark3.
 
 <img src="img/example.png" alt="script" title="script" width=50%>
-
 
 ## Contents
 
@@ -14,44 +13,29 @@ This repository contains two Bash scripts designed for converting Amiibo files a
 5. [Contributing](#contributing)
 6. [License](#license)
 
-## Scripts
-
-### 1. `bin2eml.sh`
-
-This script converts Amiibo binary files to Emulate format. It recursively scans a specified directory, converts the files, and saves the resulting Emulate files in a specified output directory (EML).
-
+## Script
 ### 2. `amiiboPM3.sh`
 
-This script automates the execution of Proxmark3 commands on a batch of Emulate files. It takes an input directory containing Emulate files, executes Proxmark3 commands on each file, and provides status updates. Press the physical button on the device to skip to the next Amiibo.
+This script automates the execution of Proxmark3 commands on a batch of .bin files. It takes an input directory of .bin files or the direct path do a single .bin file, executes Proxmark3 commands on each file, and provides status updates. Press the physical button on the device to skip to the next Amiibo. The script will check the whole directory for .bin files and then emulate them in order.
 
 ## Usage
-
-### `bin2eml.sh`
-
-```
-bash bin2eml.sh </path/to/.bin/directory>
-```
-
 ### `amiiboPM3.sh`
 
 ```
-bash amiiboPM3.sh </path/to/.eml/directory>
+bash amiiboPM3.sh </path/to/.bin/directory or /path/to/.bin>
 ```
 
 ## Prerequisites
 
 - Proxmark3 installed on your system
 - Input Amiibo files in binary format (.bin)
-- Emulate files will be saved with the .eml extension
 
 ## Instructions
 
 - Ensure Proxmark3 is properly installed and accessible in your environment.
 - Edit the Proxmark3 file paths in each script.
-- Place the Amiibo binary files in the specified input directory.  
-- Execute bin2eml.sh with the input directory as an argument.  
-- The script will convert the files and save the Emulate files in the specified output directory.  
-- Use amiiboPM3.sh to automate the execution of Proxmark3 commands on the Emulate files.  
+- Place the Amiibo binary files in a specified directory.  
+- Use amiiboPM3.sh to automate the execution of Proxmark3 commands on the .bin files.  
 - Press the button on the side of the PM3 to emulate the next Amiibo (green light - ready).  
  
 ## Contributing
