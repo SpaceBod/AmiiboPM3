@@ -10,6 +10,9 @@ NC='\033[0m' # No Color
 CHECK_MARK="\xE2\x9C\x94"
 
 CLIENT="/usr/local/Cellar/proxmark3/4.14831/bin/pm3"
+CONVERTER="/usr/local/Cellar/proxmark3/4.14831/share/proxmark3/tools/pm3_amii_bin2eml.pl"
+COUNTER=0
+SINGLE_FILE=false
 
 # Clear contents of the "temp" folder
 temp_folder="temp"
@@ -24,10 +27,8 @@ echo ""
 rename_folders() {
     local dir="$1"
     local new_dir
-
     # Rename the directory first
     new_dir="${dir// /_}"  # Replace spaces with underscores
-
     if [[ "$dir" != "$new_dir" ]]; then
         mv "$dir" "$new_dir"
     fi
@@ -43,18 +44,47 @@ rename_folders() {
         fi
     done
 
+    # Rename and convert single .bin file
+    if $SINGLE_FILE; then
+        for bin_file in "$temp_folder"/*.bin; do
+            if [ -f "$bin_file" ]; then
+                new_bin_file="${bin_file// /}"  # Remove spaces
+                mv "$bin_file" "$new_bin_file"
+                convert_amiibo "$new_bin_file"
+            fi
+        done
+    fi
+
     # If there are no .bin files, and the directory name contains no spaces, skip renaming
     if ! $has_bin_files && [[ "$new_dir" != *" "* ]]; then
         return
     fi
 
-    # Rename .bin files
+    # Rename and convert .bin files in subfolders
     for bin_file in "$new_dir"/*.bin; do
         if [ -f "$bin_file" ]; then
             new_bin_file="${bin_file// /}"  # Remove spaces
             mv "$bin_file" "$new_bin_file"
+            convert_amiibo "$new_bin_file"
         fi
     done
+}
+
+# Convert BIN to EML file
+convert_amiibo() {
+    local INPUT_FILE="$1"
+    COUNTER=$((COUNTER + 1))
+    if [ -f "$INPUT_FILE" ] && [ "${INPUT_FILE##*.}" == "bin" ]; then
+        local BASE_DIR=$(dirname "$INPUT_FILE")
+        local BASENAME=$(basename "$INPUT_FILE")
+        local BASENAME_NO_EXT="${BASENAME%.bin}"
+        local OUTPUT_FILE="${BASE_DIR}/${BASENAME_NO_EXT// /_}.eml"
+
+        ${CONVERTER} "$INPUT_FILE" > "$OUTPUT_FILE" 2> /dev/null
+        rm "$INPUT_FILE"
+    else
+        echo "Invalid input file: $INPUT_FILE"
+    fi
 }
 
 # Function to process .bin files
@@ -64,16 +94,16 @@ process_bin_files() {
 
     # Check if there are subfolders in the temp folder
     if [ -z "$(find "$temp_folder" -mindepth 1 -type d)" ]; then
-        # No subfolders, process .bin files directly in the temp folder
-        for current_dir in "$temp_folder"/*.bin; do
+        # No subfolders, process .eml files directly in the temp folder
+        for current_dir in "$temp_folder"/*.eml; do
             if [ -f "$current_dir" ]; then
-                BIN_FILE_NAME=$(basename "$current_dir")
-                echo -n -e "${YELLOW}Processing ${NC}'${BIN_FILE_NAME}'"
+                EML_FILE_NAME=$(basename "$current_dir")
+                echo -n -e "${YELLOW}Processing ${NC}'${EML_FILE_NAME}'"
                 ${CLIENT} -c "hf mf eclr" > /dev/null 2>&1
                 ${CLIENT} -c "hf mfu eload -f ${current_dir} --ul" > /dev/null 2>&1
-                echo -e -n "\\r\033[K${PURPLE}- ${GREEN}Ready ${NC}'${BIN_FILE_NAME}'"
+                echo -e -n "\\r\033[K${PURPLE}- ${GREEN}Ready ${NC}'${EML_FILE_NAME}'"
                 ${CLIENT} -c "hf 14a sim -t 7" > /dev/null 2>&1
-                echo -e "\\r\033[K${PURPLE}${CHECK_MARK} ${GREEN}Done ${NC}'${BIN_FILE_NAME}'"
+                echo -e "\\r\033[K${PURPLE}${CHECK_MARK} ${GREEN}Done ${NC}'${EML_FILE_NAME}'"
             fi
         done
     else
@@ -104,6 +134,9 @@ if [ -d "$1" ]; then
         echo -e "${RED}Error: Directory '$1' does not exist.${NC}"
         exit 1
     fi
+else
+    # It's a file, set singleFile to true
+    SINGLE_FILE=true
 fi
 
 # Create a copy of the input directory in the "temp" folder
@@ -116,9 +149,9 @@ echo -e "\\r\033[K${PURPLE}${CHECK_MARK} ${GREEN}Files copied to temp folder.${N
 echo -e -n "${YELLOW}Formatting file names.${NC}"
 rename_folders "$temp_folder/$(basename "$1")"
 
-echo -e "\r\033[K${PURPLE}${CHECK_MARK} ${GREEN}Formatting complete.${NC}"
+echo -e "\r\033[K${PURPLE}${CHECK_MARK} ${GREEN}Formatting complete (${COUNTER} files).${NC}"
 
 echo ""
-echo "Starting Emulation: $(basename "$1")"
+echo -e "${CYAN}Starting Emulation: ${NC}$(basename "$1")"
 process_bin_files "$temp_folder"
-echo -e "\\r\033[K${PURPLE}${CHECK_MARK} ${GREEN}Processing complete.${NC}"
+echo -e "\n${PURPLE}Script complete.${NC}"
