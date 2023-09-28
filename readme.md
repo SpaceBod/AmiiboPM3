@@ -1,6 +1,6 @@
 # Amiibo Conversion Scripts
 
-This repository contains two Bash scripts designed for converting Amiibo files and executing Proxmark3 commands. These scripts facilitate the process of formatting the Amiibo binary files (.bin) and emulating them using Proxmark3.
+This repository contains a Bash script designed to convert Amiibo files and execute Proxmark3 commands. This script facilitate the process of formatting the Amiibo binary files (.bin) and emulating them using Proxmark3.
 
 <img src="img/example.png" alt="script" title="script" width=50%>
 
