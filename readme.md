@@ -1,4 +1,4 @@
-# Amiibo Conversion Scripts
+# Amiibo NFC Hacking
 
 This repository contains a Bash script designed to convert Amiibo files and execute Proxmark3 commands. This script facilitate the process of formatting the Amiibo binary files (.bin) and emulating them using Proxmark3.
 
@@ -13,16 +13,29 @@ This repository contains a Bash script designed to convert Amiibo files and exec
 5. [Contributing](#contributing)
 6. [License](#license)
 
-## Script
-### 2. `amiiboPM3.sh`
+## Scripts
+### 1. `amiiboPM3.sh`
 
-This script automates the execution of Proxmark3 commands on a batch of .bin files. It takes an input directory of .bin files or the direct path do a single .bin file, executes Proxmark3 commands on each file, and provides status updates. Press the physical button on the device to skip to the next Amiibo. The script will check the whole directory for .bin files and then emulate them in order.
+This script automates the execution of Proxmark3 commands on a batch of .bin files. It takes an input directory of .bin files or the direct path do a single .bin file, executes Proxmark3 commands on each file, and provides status updates. Press the physical button on the device to skip to the next Amiibo. The script will check the whole directory for .bin files and then emulate them in order.  
+
+There is another script included, `uidGen.sh`, which randomises the UID of the Amiibo to be simulated.
+
+
+### 2. `uidGen.sh`
+
+This script emulates a single Amiibo, randomising  its UID, allowing users to bypass the daily scan limit. Upon pressing the Proxmark3's button, a new UID is generated and simulated.
 
 ## Usage
 ### `amiiboPM3.sh`
 
 ```
 bash amiiboPM3.sh </path/to/.bin/directory or /path/to/.bin>
+```
+  
+### `uidGen.sh`
+
+```
+bash uidGen.sh </path/to/.bin>
 ```
 
 ## Prerequisites
