@@ -50,9 +50,9 @@ function main() {
     echo "--------------"
     while true; do
         local uid="04$(random_num_hex 12)"
-        ${CLIENT} -c "script run amiibo_change_uid $uid $inputTemplate temp/$newName $retail" > /dev/null 2>&1
+        ${CLIENT} -c "script run amiibo_change_uid $uid temp/$newName temp/out.bin $retail" > /dev/null 2>&1
         echo -e "${GREEN}${uid}"
-        ${CLIENT} -c "script run hf_mfu_amiibo_sim -f temp/$newName" > /dev/null 2>&1
+        ${CLIENT} -c "script run hf_mfu_amiibo_sim -f temp/out.bin" > /dev/null 2>&1
     done
 }
 
